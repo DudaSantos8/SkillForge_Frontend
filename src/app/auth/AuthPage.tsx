@@ -23,7 +23,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col relative">
       <Navbar />
-      <div className="flex-grow flex justify-center items-center p-8">
+      <div className="flex-grow flex justify-center items-center p-4 md:p-8">
         <div className="bg-[#0077B6] w-full max-w-[400px] mx-auto rounded-[20px] p-8 shadow-md">
           <h3 className="text-white text-xl md:text-2xl font-bold mb-8 text-center">
             {type === "login" ? "Login" : "Cadastro"}
@@ -32,7 +32,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
             <input
               type="email"
               placeholder="Email"
-              className="w-full p-3 border rounded-lg focus:outline-none text-black focus:ring-2 focus:ring-[#FFA500]"
+              className="w-full p-3 border rounded-lg focus:outline-none text-black focus:ring-2 focus:ring-[#FFA500] text-sm md:text-base"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -40,7 +40,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
             <input
               type="password"
               placeholder="Senha"
-              className="w-full p-3 border rounded-lg focus:outline-none text-black focus:ring-2 focus:ring-[#FFA500]"
+              className="w-full p-3 border rounded-lg focus:outline-none text-black focus:ring-2 focus:ring-[#FFA500] text-sm md:text-base"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -49,7 +49,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
               <input
                 type="password"
                 placeholder="Confirme a Senha"
-                className="w-full p-3 border rounded-lg focus:outline-none text-black focus:ring-2 focus:ring-[#FFA500]"
+                className="w-full p-3 border rounded-lg focus:outline-none text-black focus:ring-2 focus:ring-[#FFA500] text-sm md:text-base"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -57,18 +57,24 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
             )}
             <button
               type="submit"
-              className="w-full bg-[#FFA500] text-white p-3 rounded-lg font-bold hover:bg-[#FF6F00] transition"
+              className="w-full bg-[#FFA500] text-white p-3 rounded-lg font-bold hover:bg-[#FF6F00] transition text-sm md:text-base"
             >
               {type === "login" ? "Entrar" : "Cadastrar"}
             </button>
           </form>
           {type === "login" ? (
-            <p className="text-center text-white mt-4">
-              Não tem uma conta? <Link href="/auth/register" className="text-[#FFD166] hover:underline">Cadastre-se</Link>
+            <p className="text-center text-white mt-4 text-sm md:text-base">
+              Não tem uma conta?{" "}
+              <Link href="/auth/register" className="text-[#FFD166] hover:underline">
+                Cadastre-se
+              </Link>
             </p>
           ) : (
-            <p className="text-center text-white mt-4">
-              Já tem uma conta? <Link href="/auth/login" className="text-[#FFD166] hover:underline">Faça login</Link>
+            <p className="text-center text-white mt-4 text-sm md:text-base">
+              Já tem uma conta?{" "}
+              <Link href="/auth/login" className="text-[#FFD166] hover:underline">
+                Faça login
+              </Link>
             </p>
           )}
         </div>
