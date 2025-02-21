@@ -10,7 +10,7 @@ const HelpButton: React.FC = () => {
     <div className="fixed bottom-2 right-4 z-50">
       <button
         onClick={() => router.push("/help")}
-        className="flex items-center bg-[#FFA500] text-white px-4 py-2 rounded hover:bg-[#e69500] shadow-lg"
+        className="flex items-center bg-[#FFA500] text-white px-4 py-2 rounded-[10px] hover:bg-[#e69500] shadow-lg"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
