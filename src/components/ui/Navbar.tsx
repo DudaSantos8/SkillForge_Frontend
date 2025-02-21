@@ -9,7 +9,6 @@ const Navbar: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Verifica se há um token no localStorage para determinar a autenticação
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
   }, []);
@@ -21,14 +20,22 @@ const Navbar: React.FC = () => {
       <h1
         className="text-white text-xl md:text-2xl font-bold cursor-pointer"
         onClick={() => router.push("/")}
+        aria-label="Ir para a página inicial"
       >
         SkillForge
       </h1>
-      <p className="text-white text-xl md:text-2xl font-bold">Sobre Nós</p>
+      <p
+        className="text-white text-xl md:text-2xl font-bold cursor-pointer"
+        onClick={() => router.push("/about")}
+        aria-label="Sobre Nós"
+      >
+        Sobre Nós
+      </p>
       <div className="relative flex items-center space-x-4">
         <div
           className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center cursor-pointer"
           onClick={toggleMenu}
+          aria-label="Abrir menu"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,23 +60,25 @@ const Navbar: React.FC = () => {
                   <li
                     className="px-4 py-2 text-white hover:text-[#00B4D8] cursor-pointer"
                     onClick={() => router.push("/profile")}
+                    aria-label="Ir para o perfil"
                   >
                     Meu Perfil
                   </li>
                   <li
                     className="px-4 py-2 text-white hover:text-[#00B4D8] cursor-pointer"
                     onClick={() => router.push("/settings")}
+                    aria-label="Ir para configurações"
                   >
                     Configurações
                   </li>
                   <li
                     className="px-4 py-2 text-white hover:text-[#00B4D8] cursor-pointer"
                     onClick={() => {
-                      // Aqui você pode implementar o logout (ex: remover token)
                       localStorage.removeItem("token");
                       setIsAuthenticated(false);
                       router.push("/");
                     }}
+                    aria-label="Sair"
                   >
                     Sair
                   </li>
@@ -79,12 +88,14 @@ const Navbar: React.FC = () => {
                   <li
                     className="px-4 py-2 text-white hover:text-[#00B4D8] cursor-pointer"
                     onClick={() => router.push("/auth/login")}
+                    aria-label="Fazer login"
                   >
                     Login
                   </li>
                   <li
                     className="px-4 py-2 text-white hover:text-[#00B4D8] cursor-pointer"
                     onClick={() => router.push("/auth/register")}
+                    aria-label="Cadastrar-se"
                   >
                     Cadastrar
                   </li>
