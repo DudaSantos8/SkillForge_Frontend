@@ -33,11 +33,19 @@ const GamePage: React.FC = () => {
         style={{ backgroundImage: 'url("/seu-background.jpg")' }}
       >
         <div className="bg-[#003F5C] bg-opacity-80 w-full max-w-[800px] p-6 md:p-8 rounded-md text-white shadow-md">
-          <h2 className="text-center text-2xl md:text-3xl font-bold mb-4">{questionTitle}</h2>
-          <p className="mb-6 text-base md:text-lg text-center">{questionText}</p>
+          <h2 id="question-title" className="text-center text-2xl md:text-3xl font-bold mb-4">
+            {questionTitle}
+          </h2>
+          <p id="question-text" className="mb-6 text-base md:text-lg text-center">
+            {questionText}
+          </p>
 
-          <div className="space-y-4">
-            {["Opção A", "Opção B", "Opção C"].map((option, index) => (
+          <div role="radiogroup" aria-labelledby="question-title" className="space-y-4">
+            {[
+              "Opção A: Intervir e garantir que todos tenham voz.",
+              "Opção B: Esperar que alguém mais fale sobre isso.",
+              "Opção C: Ignorar a situação."
+            ].map((option, index) => (
               <label
                 key={index}
                 className="flex items-center bg-[#1f1f1f] bg-opacity-50 p-4 rounded-md cursor-pointer hover:bg-opacity-70"
@@ -45,9 +53,11 @@ const GamePage: React.FC = () => {
                 <input
                   type="radio"
                   name="gameOption"
-                  className="form-radio text-[#FFA500] mr-3"
+                  className="form-radio text-[#FFA500] mr-3 focus:ring-2 focus:ring-white"
                   checked={selectedOption === option}
                   onChange={() => setSelectedOption(option)}
+                  aria-checked={selectedOption === option}
+                  aria-describedby="question-text"
                 />
                 <span className="text-base md:text-lg">{option}</span>
               </label>
@@ -56,12 +66,12 @@ const GamePage: React.FC = () => {
 
           <div className="flex flex-col md:flex-row md:justify-between gap-4 mt-8">
             <Button
-              className="bg-[#FFA500] text-white w-full max-w-[200px] h-[50px] rounded-[10px] text-lg hover:bg-[#FF6F00] md:w-[150px] md:h-[40px] md:text-base"
+              className="bg-[#FFA500] text-white w-full max-w-[200px] h-[50px] rounded-[10px] text-lg hover:bg-[#FF6F00] md:w-[150px] md:h-[40px] md:text-base focus:outline-none focus:ring-2 focus:ring-white"
             >
               VOLTAR
             </Button>
             <Button
-              className="bg-[#0077B6] text-white w-full max-w-[200px] h-[50px] rounded-[10px] text-lg hover:bg-[#005b80] md:w-[150px] md:h-[40px] md:text-base"
+              className="bg-[#0077B6] text-white w-full max-w-[200px] h-[50px] rounded-[10px] text-lg hover:bg-[#005b80] md:w-[150px] md:h-[40px] md:text-base focus:outline-none focus:ring-2 focus:ring-white"
             >
               PRÓXIMO
             </Button>

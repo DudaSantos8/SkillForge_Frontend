@@ -10,6 +10,9 @@ const Footer: React.FC = () => {
         <a
           href="https://linkedin.com"
           className="text-[#00B4D8] hover:underline"
+          aria-label="Visite o LinkedIn de Maria Santos e Alicia Feliciano"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           LinkedIn
         </a>{" "}
@@ -17,6 +20,9 @@ const Footer: React.FC = () => {
         <a
           href="https://twitter.com"
           className="text-[#00B4D8] hover:underline"
+          aria-label="Visite o Twitter de Maria Santos e Alicia Feliciano"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Twitter
         </a>

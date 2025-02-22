@@ -26,7 +26,7 @@ const HelpButton: React.FC = () => {
             d="M8.257 5.099c.765-1.36 2.702-1.36 3.466 0 .75 1.338.75 3.206 0 4.544-.688 1.228-1.828 1.948-2.466 2.448-.632.492-1.002.985-1.002 1.958v.5m2-9h.01"
           />
         </svg>
-        <span className="ml-3 text-lg">Dúvidas?</span>
+        <span className="ml-3 text-lg hidden sm:inline">Dúvidas?</span>
       </button>
     </div>
   );
