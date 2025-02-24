@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import HelpButton from "@/components/ui/HelpButton";
@@ -9,7 +9,6 @@ import Button from "@/components/ui/Button";
 
 const GamePage: React.FC = () => {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const title = searchParams?.get("title");
 
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -85,4 +84,13 @@ const GamePage: React.FC = () => {
   );
 };
 
-export default GamePage;
+// Envolvendo a página com Suspense para garantir que useSearchParams funcione corretamente
+const SuspenseWrapper = () => {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <GamePage />
+    </Suspense>
+  );
+};
+
+export default SuspenseWrapper;
