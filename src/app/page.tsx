@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../components/ui/Footer";
@@ -10,6 +10,16 @@ import Button from "../components/ui/Button";
 const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState("softskills");
   const router = useRouter();
+
+  useEffect(() => {
+    // Verifica se o token está presente no localStorage
+    const token = localStorage.getItem("token");
+
+    // Se o token não estiver presente, redireciona para a página de login
+    if (!token) {
+      router.push("/auth/login");
+    }
+  }, [router]); // O hook será executado ao carregar a página
 
   const handleGameStart = (title: string) => {
     router.push(`/game?title=${title}`);
