@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 const Navbar: React.FC = () => {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
+  // Verificando o token ao carregar o componente
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
+    setIsAuthenticated(!!token); // Se o token existe, o usuário está autenticado
   }, []);
 
   const toggleMenu = () => setShowMenu(!showMenu);

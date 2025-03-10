@@ -1,45 +1,58 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";  // Para redirecionar após sucesso
+import { useRouter } from "next/navigation"; // Para redirecionar após sucesso
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import HelpButton from "@/components/ui/HelpButton";
-import api from "@/utils/api";  // Importando o Axios configurado
+import axios from "axios"; // Importando Axios diretamente
 
 const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter();  // Hook para navegação após sucesso
+  const [loading, setLoading] = useState(false); // Estado para controle de loading
+  const router = useRouter(); // Hook para navegação após sucesso
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (type === "register" && password !== confirmPassword) {
       setErrorMessage("As senhas não coincidem!");
       return;
     }
+    if (type === "register" && password.length < 8) {
+      setErrorMessage("Precisa ser maior que 8 caracteres!");
+      return;
+    }
     setErrorMessage("");
+    setLoading(true); // Iniciar o loading
 
     try {
       if (type === "login") {
         // Lógica de login
-        const response = await api.post("/login", { email, password });
+        const response = await axios.post("http://18.231.117.6:8000/login", { email, password });
         if (response.status === 200) {
-          router.push("/home");  // Redirecionar para a home após login
+          // Armazenando o id e o email no localStorage após o login
+          const { id, email } = response.data;
+          localStorage.setItem("userId", id);  // Armazenando o id
+          localStorage.setItem("userEmail", email);  // Armazenando o email
+
+          router.push("/"); // Redirecionar para a home após login
         }
       } else if (type === "register") {
         // Lógica de cadastro
-        const response = await api.post("/users", { email, password, confirmPassword });
-        if (response.status === 201) {
-          router.push("/auth/login");  // Redirecionar para o login após cadastro
+        const response = await axios.post("http://18.231.117.6:8000/users", { email, password, confirmPassword });
+        if (response.status === 200) {
+          router.push("/auth/login"); // Redirecionar para o login após cadastro
         }
       }
     } catch (error: any) {
       setErrorMessage(error.response?.data?.message || "Erro ao processar a solicitação. Tente novamente.");
+    } finally {
+      setLoading(false); // Finaliza o loading
     }
   };
 
@@ -95,8 +108,9 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
             <button
               type="submit"
               className="w-full bg-[#FFA500] text-white p-3 rounded-lg font-bold hover:bg-[#FF6F00] transition text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-white"
+              disabled={loading} // Desabilitar o botão durante o loading
             >
-              {type === "login" ? "Entrar" : "Cadastrar"}
+              {loading ? "Carregando..." : type === "login" ? "Entrar" : "Cadastrar"}
             </button>
           </form>
           {type === "login" ? (
