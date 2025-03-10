@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
 
   // Verificando o token ao carregar o componente
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userEmail");
     setIsAuthenticated(!!token); // Se o token existe, o usuário está autenticado
   }, []);
 
@@ -119,13 +119,13 @@ const Navbar: React.FC = () => {
                   <li
                     className="px-4 py-2 text-white hover:text-[#00B4D8] cursor-pointer"
                     onClick={() => {
-                      localStorage.removeItem("token");
+                      localStorage.removeItem("userEmail");
                       setIsAuthenticated(false);
                       router.push("/");
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        localStorage.removeItem("token");
+                        localStorage.removeItem("userEmail");
                         setIsAuthenticated(false);
                         router.push("/");
                       }
