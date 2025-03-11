@@ -32,7 +32,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
 
     try {
       if (type === "login") {
-        const response = await axios.post("https://0.0.0.0:8000/login", { email, password });
+        const response = await axios.post("https://18.231.117.6:8000/login", { email, password });
         if (response.status === 200) {
           const { id, email } = response.data;
           localStorage.setItem("userId", id);
@@ -41,7 +41,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
           router.push("/");
         }
       } else if (type === "register") {
-        const response = await axios.post("https://0.0.0.0:8000/users", { email, password, confirmPassword });
+        const response = await axios.post("https://18.231.117.6:8000/users", { email, password, confirmPassword });
         if (response.status === 200) {
           router.push("/auth/login");
         }
