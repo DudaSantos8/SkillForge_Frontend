@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Para redirecionar após sucesso
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import HelpButton from "@/components/ui/HelpButton";
-import axios from "axios"; // Importando Axios diretamente
+import axios, { AxiosError } from "axios";
 
 const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false); // Estado para controle de loading
-  const router = useRouter(); // Hook para navegação após sucesso
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,31 +28,31 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
       return;
     }
     setErrorMessage("");
-    setLoading(true); // Iniciar o loading
+    setLoading(true);
 
     try {
       if (type === "login") {
-        // Lógica de login
         const response = await axios.post("http://18.231.117.6:8000/login", { email, password });
         if (response.status === 200) {
-          // Armazenando o id e o email no localStorage após o login
           const { id, email } = response.data;
-          localStorage.setItem("userId", id);  // Armazenando o id
-          localStorage.setItem("userEmail", email);  // Armazenando o email
+          localStorage.setItem("userId", id);
+          localStorage.setItem("userEmail", email);
 
-          router.push("/"); // Redirecionar para a home após login
+          router.push("/");
         }
       } else if (type === "register") {
-        // Lógica de cadastro
         const response = await axios.post("http://18.231.117.6:8000/users", { email, password, confirmPassword });
         if (response.status === 200) {
-          router.push("/auth/login"); // Redirecionar para o login após cadastro
+          router.push("/auth/login");
         }
       }
-    } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || "Erro ao processar a solicitação. Tente novamente.");
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      setErrorMessage(
+        axiosError.response?.data?.message || "Erro ao processar a solicitação. Tente novamente."
+      );
     } finally {
-      setLoading(false); // Finaliza o loading
+      setLoading(false);
     }
   };
 
@@ -108,7 +108,7 @@ const AuthPage: React.FC<{ type: "login" | "register" }> = ({ type }) => {
             <button
               type="submit"
               className="w-full bg-[#FFA500] text-white p-3 rounded-lg font-bold hover:bg-[#FF6F00] transition text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-white"
-              disabled={loading} // Desabilitar o botão durante o loading
+              disabled={loading}
             >
               {loading ? "Carregando..." : type === "login" ? "Entrar" : "Cadastrar"}
             </button>
