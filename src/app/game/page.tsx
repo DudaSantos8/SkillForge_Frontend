@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -12,13 +12,6 @@ interface Question {
   question: string;
   options: string[];
   correct_answer: number;
-}
-
-interface Feedback {
-  score: number | null;
-  title: string;
-  feedback_summary: string;
-  detailed_feedback: string[];
 }
 
 const softSkillsTitles = [
@@ -46,7 +39,6 @@ const GamePage: React.FC = () => {
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   useEffect(() => {
     if (!title || hasFetched) return;
@@ -62,12 +54,6 @@ const GamePage: React.FC = () => {
     if (!category) {
       console.error("Título não reconhecido:", title);
       setIsGameFinished(true);
-      setFeedback({
-        score: 0,
-        title: "Erro",
-        feedback_summary: "Título não reconhecido.",
-        detailed_feedback: ["Por favor, tente novamente com um título válido."]
-      });
       return;
     }
 
@@ -77,7 +63,7 @@ const GamePage: React.FC = () => {
       .catch((err) => console.error("Erro ao buscar perguntas:", err));
   }, [title, hasFetched]);
 
-  if (isGameFinished || questions.length === 0 || !questions[currentQuestionIndex]) {
+  if (questions.length === 0 || !questions[currentQuestionIndex]) {
     return <div className="text-center text-lg">Carregando perguntas...</div>;
   }
 
@@ -90,27 +76,39 @@ const GamePage: React.FC = () => {
   };
 
   const nextQuestion = () => {
+    if (selectedOption) {
+      checkAnswer(selectedOption);
+      setSelectedOption("");
+    }
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setIsGameFinished(true);
-      sendFeedback();
     }
   };
 
-  const getScore = () => answers.filter((answer) => answer).length;
+  const getScore = () => {
+    if (answers.length !== questions.length) {
+      console.warn(`Erro: Esperado ${questions.length} respostas, mas recebeu ${answers.length}`);
+    }
+    return answers.filter((answer) => answer).length;
+  };
 
-  const sendFeedback = async (): Promise<void> => {
+  const generateFeedback = () => {
     const score = getScore();
-    try {
-      const response = await fetch(
-        `http://18.231.117.6:8000/feedback?title=${title}&score=${score}`,
-        { method: "GET" }
-      );
-      const data: Feedback = await response.json();
-      setFeedback(data);
-    } catch (err) {
-      console.error("Erro ao buscar feedback:", err);
+    const total = questions.length;
+
+    if (score === total) {
+      return "Incrível! Você acertou todas as questões e demonstrou um domínio completo do conteúdo.";
+    } else if (score >= total * 0.8) {
+      return "Parabéns! Você teve um excelente desempenho, continue assim.";
+    } else if (score >= total * 0.6) {
+      return "Muito bom! Você acertou a maioria das questões. Há ainda alguns pontos para revisar.";
+    } else if (score >= total * 0.4) {
+      return "Você teve um bom desempenho, mas há espaço para melhorias. Tente revisar os temas que apresentou dificuldades.";
+    } else {
+      return "Não desanime! Use este resultado como uma oportunidade para revisar e aprender ainda mais.";
     }
   };
 
@@ -121,17 +119,15 @@ const GamePage: React.FC = () => {
         className="flex-grow bg-cover bg-center flex justify-center items-center p-4"
         style={{ backgroundImage: 'url("/seu-background.jpg")' }}
       >
-        <div className="bg-[#003F5C] bg-opacity-80 w-full max-w-[800px] p-6 md:p-8 rounded-md text-white shadow-md">
+        <div className="bg-[#003F5C] bg-opacity-90 w-full max-w-[800px] p-8 rounded-2xl text-white shadow-lg">
           {!isGameFinished ? (
             <>
-              <h2 className="text-center text-2xl md:text-3xl font-bold mb-4">
-                {currentQuestion.question}
-              </h2>
+              <h2 className="text-center text-3xl font-bold mb-6">{currentQuestion.question}</h2>
               <div className="space-y-4">
                 {currentQuestion.options.map((option, index) => (
                   <label
                     key={index}
-                    className="block p-4 bg-gray-800 rounded cursor-pointer hover:bg-gray-700"
+                    className="block p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-blue-500 transition"
                   >
                     <input
                       type="radio"
@@ -145,38 +141,16 @@ const GamePage: React.FC = () => {
                 ))}
               </div>
               <div className="flex justify-between mt-8">
-                <Button onClick={() => {
-                  setSelectedOption(""); // Resetando a opção ao voltar
-                  setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1));
-                }}>
-                  VOLTAR
-                </Button>
-                <Button onClick={() => {
-                  if (selectedOption) {
-                    checkAnswer(selectedOption);
-                  }
-                  nextQuestion();
-                }}>
-                  PRÓXIMO
-                </Button>
+                <Button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}>VOLTAR</Button>
+                <Button className="bg-green-500 text-white px-4 py-2 rounded-lg" onClick={nextQuestion}>PRÓXIMO</Button>
               </div>
             </>
-          ) : feedback ? (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold">Jogo Finalizado</h2>
-              <p>Pontuação final: {getScore()} de {questions.length}</p>
-              <h3 className="text-xl font-bold mt-4">Feedback</h3>
-              <p>{feedback.feedback_summary}</p>
-              {feedback.detailed_feedback && feedback.detailed_feedback.length > 0 && (
-                <ul className="mt-4">
-                  {feedback.detailed_feedback.map((detail, index) => (
-                    <li key={index} className="text-gray-300">{detail}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
           ) : (
-            <div className="text-center text-lg">Carregando feedback...</div>
+            <div className="text-center">
+              <h2 className="text-3xl font-bold mb-4">Jogo Finalizado</h2>
+              <p>Acertos: {getScore()}, Erros: {questions.length - getScore()}</p>
+              <p>{generateFeedback()}</p>
+            </div>
           )}
         </div>
       </div>
