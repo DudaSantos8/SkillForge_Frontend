@@ -21,9 +21,20 @@ interface Feedback {
   detailed_feedback: string[];
 }
 
-const softSkillsTitles = ["Empatia", "Comunicacao inclusiva", "Pessoas negras", "Respeito as diferencas", "Vies Inconsciente", "Interseccionalidade", "Diversidade Cultural", "Equidade De Genero", "Inclusao De PCD", "Racial E Etnica", "LGBTQIA E Inclusao", "Socioeconomica", "Religiao E Espiritualidade", "Saude Mental E Inclusao"];
+const softSkillsTitles = [
+  "Empatia", "Comunicacao inclusiva", "Pessoas negras", "Respeito as diferencas",
+  "Vies Inconsciente", "Interseccionalidade", "Diversidade Cultural",
+  "Equidade De Genero", "Inclusao De PCD", "Racial E Etnica",
+  "LGBTQIA E Inclusao", "Socioeconomica", "Religiao E Espiritualidade",
+  "Saude Mental E Inclusao",
+];
 
-const hardSkillsTitles = ["Funcoes Simples", "Comentarios Uteis", "Codigo Legivel", "Nomes Significativos", "Formatacao de Codigo", "Principio DRY", "Principio SRP", "Tratamente de Erros", "Reducao de Dependencias", "Testabilidade", "Principio KISS", "Principio YAGNI", "Refatoracao Continua", "Boas Praticas de POO"];
+const hardSkillsTitles = [
+  "Funcoes Simples", "Comentarios Uteis", "Codigo Legivel", "Nomes Significativos",
+  "Formatacao de Codigo", "Principio DRY", "Principio SRP", "Tratamente de Erros",
+  "Reducao de Dependencias", "Testabilidade", "Principio KISS",
+  "Principio YAGNI", "Refatoracao Continua", "Boas Praticas de POO",
+];
 
 const GamePage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -34,10 +45,13 @@ const GamePage: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [isGameFinished, setIsGameFinished] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   useEffect(() => {
-    if (!title || questions.length > 0) return;
+    if (!title || hasFetched) return;
+
+    setHasFetched(true);
 
     const category = softSkillsTitles.includes(title)
       ? "softskills"
@@ -57,26 +71,21 @@ const GamePage: React.FC = () => {
       return;
     }
 
-    fetch(`http://18.231.117.6:8000/${category}/questions?title=${encodeURIComponent(title)}`)
+    fetch(`http://18.231.117.6:8000/${category}/questions?title=${title}`)
       .then((res) => res.json())
       .then((data) => setQuestions(data.questions))
-      .catch((err) => console.error("Carregando...", err));
-}, [title, questions.length]);
+      .catch((err) => console.error("Erro ao buscar perguntas:", err));
+  }, [title, hasFetched]);
 
-
-  if (isGameFinished) {
-    return <div className="text-center text-lg">O jogo foi finalizado.</div>;
-  }
-
-  if (questions.length === 0) {
-    return <div className="text-center text-lg text-red-500">Erro ao carregar perguntas. Por favor, tente novamente.</div>;
+  if (isGameFinished || questions.length === 0 || !questions[currentQuestionIndex]) {
+    return <div className="text-center text-lg">Carregando perguntas...</div>;
   }
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const checkAnswer = (selectedOption: string) => {
-    const correctOption = currentQuestion.options[currentQuestion.correct_answer].trim().toLowerCase();
-    const isCorrect = selectedOption.trim().toLowerCase() === correctOption;
+    const correctOption = currentQuestion.options[currentQuestion.correct_answer];
+    const isCorrect = selectedOption === correctOption;
     setAnswers((prevAnswers) => [...prevAnswers, isCorrect]);
   };
 
@@ -95,23 +104,23 @@ const GamePage: React.FC = () => {
     const score = getScore();
     try {
       const response = await fetch(
-        `http://18.231.117.6:8000/feedback?title=${encodeURIComponent(title ?? "")}&score=${score}`,
+        `http://18.231.117.6:8000/feedback?title=${title}&score=${score}`,
         { method: "GET" }
       );
       const data: Feedback = await response.json();
-      if (score === 0) {
-        data.feedback_summary = "Tente novamente! Você pode melhorar.";
-      }
       setFeedback(data);
     } catch (err) {
-      console.error("Carregando feedback:", err);
+      console.error("Erro ao buscar feedback:", err);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col relative">
       <Navbar />
-      <div className="flex-grow bg-cover bg-center flex justify-center items-center p-4" style={{ backgroundImage: 'url("/seu-background.jpg")' }}>
+      <div
+        className="flex-grow bg-cover bg-center flex justify-center items-center p-4"
+        style={{ backgroundImage: 'url("/seu-background.jpg")' }}
+      >
         <div className="bg-[#003F5C] bg-opacity-80 w-full max-w-[800px] p-6 md:p-8 rounded-md text-white shadow-md">
           {!isGameFinished ? (
             <>
@@ -135,10 +144,9 @@ const GamePage: React.FC = () => {
                   </label>
                 ))}
               </div>
-              <div className="flex justify-between mt-8 bg-[#FFA500] text-white">
+              <div className="flex justify-between mt-8">
                 <Button onClick={() => {
-                  setSelectedOption("");
-                  setAnswers((prevAnswers) => prevAnswers.slice(0, -1));
+                  setSelectedOption(""); // Resetando a opção ao voltar
                   setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1));
                 }}>
                   VOLTAR
