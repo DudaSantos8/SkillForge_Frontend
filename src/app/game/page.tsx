@@ -60,7 +60,7 @@ const GamePage: React.FC = () => {
     fetch(`http://18.231.117.6:8000/${category}/questions?title=${encodeURIComponent(title)}`)
       .then((res) => res.json())
       .then((data) => setQuestions(data.questions))
-      .catch((err) => console.error("Erro ao buscar perguntas:", err));
+      .catch((err) => console.error("Carregando...", err));
 }, [title, questions.length]);
 
 
