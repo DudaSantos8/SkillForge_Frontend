@@ -104,7 +104,7 @@ const GamePage: React.FC = () => {
       }
       setFeedback(data);
     } catch (err) {
-      console.error("Erro ao buscar feedback:", err);
+      console.error("Carregando feedback:", err);
     }
   };
 
@@ -135,7 +135,7 @@ const GamePage: React.FC = () => {
                   </label>
                 ))}
               </div>
-              <div className="flex justify-between mt-8">
+              <div className="flex justify-between mt-8 bg-[#FFA500] text-white">
                 <Button onClick={() => {
                   setSelectedOption("");
                   setAnswers((prevAnswers) => prevAnswers.slice(0, -1));
